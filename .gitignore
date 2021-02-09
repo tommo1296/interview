@@ -1,0 +1,5 @@
+# ignore terraform cache
+.terraform
+
+# ignore state files
+terraform.tfstate*
