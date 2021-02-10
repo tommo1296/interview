@@ -69,7 +69,7 @@ resource "aws_eip" "interview_nat_gw_eip" {
 
 resource "aws_nat_gateway" "interview_nat_gw" {
   allocation_id   = aws_eip.interview_nat_gw_eip.id
-  subnet_id       = aws_subnet.interview_private_subnets[0].id
+  subnet_id       = aws_subnet.interview_public_subnets[0].id
 
   tags = {
     Name = "interview-nat-gw"
