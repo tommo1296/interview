@@ -33,6 +33,8 @@ resource "aws_instance" "interview_web" {
   tags = {
     Name = "interview-web-${element(local.azs, count.index)}"
   }
+
+  depends_on = [aws_nat_gateway.interview_nat_gw]
 }
 
 resource "aws_lb_target_group" "interview_web_tg" {
