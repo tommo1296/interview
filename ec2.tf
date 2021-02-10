@@ -49,3 +49,18 @@ resource "aws_lb_target_group_attachment" "interview_web_tg_instances" {
   target_id         = element(aws_instance.interview_web.*.id, count.index)
   port              = 80
 }
+
+resource "aws_lb_listener_rule" "interview_web_listener_rule" {
+  listener_arn = aws_lb_listener.public_alb_http_listener.arn
+
+  action {
+    type              = "forward"
+    target_group_arn  = aws_lb_target_group.interview_web_tg.arn
+  }
+
+  condition {
+    path_pattern {
+      values = ["/*"]
+    }
+  }
+}
