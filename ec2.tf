@@ -41,3 +41,11 @@ resource "aws_lb_target_group" "interview_web_tg" {
   protocol  = "HTTP"
   vpc_id    = aws_vpc.interview_vpc.id
 }
+
+resource "aws_lb_target_group_attachment" "interview_web_tg_instances" {
+  count = length(aws_instance.interview_web)
+
+  target_group_arn  = aws_lb_target_group.interview_web_tg.arn
+  target_id         = element(aws_instance.interview_web.*.id, count.index)
+  port              = 80
+}
