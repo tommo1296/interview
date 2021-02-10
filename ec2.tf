@@ -34,3 +34,10 @@ resource "aws_instance" "interview_web" {
     Name = "interview-web-${element(local.azs, count.index)}"
   }
 }
+
+resource "aws_lb_target_group" "interview_web_tg" {
+  name      = "interview-web-tg"
+  port      = 80
+  protocol  = "HTTP"
+  vpc_id    = aws_vpc.interview_vpc.id
+}
