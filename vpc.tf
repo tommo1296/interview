@@ -6,38 +6,16 @@ resource "aws_vpc" "interview_vpc" {
   }
 }
 
-resource "aws_subnet" "interview_public_subnet_a" {
-  cidr_block                = "192.168.128.0/28"
+resource "aws_subnet" "interview_public_subnets" {
+  count = length(local.public_subnets)
+
+  cidr_block                = element(local.public_subnets, count.index)
   vpc_id                    = aws_vpc.interview_vpc.id
-  availability_zone         = "eu-west-2a"
+  availability_zone         = element(local.azs, count.index)
   map_public_ip_on_launch   = true
 
   tags = {
-    Name = "interview-public-subnet-a"
-    Type = "Public"
-  }
-}
-
-resource "aws_subnet" "interview_public_subnet_b" {
-  cidr_block                = "192.168.128.16/28"
-  vpc_id                    = aws_vpc.interview_vpc.id
-  availability_zone         = "eu-west-2b"
-  map_public_ip_on_launch   = true
-
-  tags = {
-    Name = "interview-public-subnet-b"
-    Type = "Public"
-  }
-}
-
-resource "aws_subnet" "interview_public_subnet_c" {
-  cidr_block                = "192.168.128.32/28"
-  vpc_id                    = aws_vpc.interview_vpc.id
-  availability_zone         = "eu-west-2c"
-  map_public_ip_on_launch   = true
-
-  tags = {
-    Name = "interview-public-subnet-c"
+    Name = "interview-public-subnet-${element(local.azs, count.index)}"
     Type = "Public"
   }
 }
@@ -63,17 +41,9 @@ resource "aws_route_table" "interview_igw_rtb" {
   }
 }
 
-resource "aws_route_table_association" "interview_public_subnet_a" {
-  subnet_id       = aws_subnet.interview_public_subnet_a.id
-  route_table_id  = aws_route_table.interview_igw_rtb.id
-}
+resource "aws_route_table_association" "interview_public_subnets" {
+  count = length(local.public_subnets)
 
-resource "aws_route_table_association" "interview_public_subnet_b" {
-  subnet_id       = aws_subnet.interview_public_subnet_b.id
-  route_table_id  = aws_route_table.interview_igw_rtb.id
-}
-
-resource "aws_route_table_association" "interview_public_subnet_c" {
-  subnet_id       = aws_subnet.interview_public_subnet_c.id
+  subnet_id       = element(aws_subnet.interview_public_subnets.*.id, count.index)
   route_table_id  = aws_route_table.interview_igw_rtb.id
 }
